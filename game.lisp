@@ -7,32 +7,32 @@
 
 (defvar *game-size* #c(640 480))
 
+;;; screen
 (defclass test-screen (screen)
   ((game-root
     :initform (make-instance 'component :size *game-size*))
    (game-view
-    :initform (make-instance 'component :size *game-size*))))
+    :initform (make-instance 'component :size *game-size*)))
+   (:default-initargs :game-sheet (load-sheet #p"testsheet_sunburst.png")))
 
+(defmethod initialize-instance :after ((screen test-screen) &key)
+  (make-instance 'sprite :image (make-image :test-background-image)
+                         :depth 1 :parent (game-root screen)))
+
+;;; game
 (defclass test-game (game)
-  ((game-root :accessor game-root
-              :initarg :game-root
-              :initform nil)
-   (game-view :accessor game-view
-              :initarg :game-view
-              :initform nil)
-   (test-screen :accessor game-test-screen))
-  (:default-initargs 
-    :game-root (make-instance 'component :size *game-size*)
-    :game-view (make-instance 'component :size *game-size*)))
+  ((test-screen :accessor game-test-screen)))
 
-(defmethod game-init ((game test-game) &key player players &allow-other-keys)
-  (declare (ignore player players))
+(defmethod game-init :before ((game test-game) &key &allow-other-keys)
   (setf (game-test-screen game) (make-instance 'test-screen :game game))
   (activate (game-test-screen game))
+  (format t "early game init complete~%"))
+
+(defmethod game-init ((game test-game) &key &allow-other-keys)
   (set-caption "Cap1" "Cap2")
-  (format t "init~%"))
+  (format t "game init complete~%"))
 
-
+;;; toplevel setup
 (defvar *game* (make-instance 'test-game))
 
 (blt-user::main)

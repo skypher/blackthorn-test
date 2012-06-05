@@ -1,0 +1,9 @@
+* root, view and sheet come from the current SCREEN if one exists,
+  otherwise from GAME. but watch out for GAME-INIT :BEFORE (GAME)
+  which calls GAME-VIEW, so the screen has to be set before that
+  (e.g. in a specialized GAME-INIT :BEFORE method)
+
+* fix make-instance 'sprite -- add to root should be explicit
+  interface
+
+* fix accessor names -- GAME-ROOT for SCREEN?!
